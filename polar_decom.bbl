@@ -1,0 +1,14 @@
+\begin{thebibliography}{1}
+
+\bibitem{high:FM}
+Nicholas~J. Higham.
+\newblock {\em Functions of Matrices: {Theory} and Computation}.
+\newblock Society for Industrial and Applied Mathematics, Philadelphia, PA,
+  USA, 2008.
+
+\bibitem{hisc90}
+Nicholas~J. Higham and Robert~S. Schreiber.
+\newblock Fast polar decomposition of an arbitrary matrix.
+\newblock {\em SIAM J. Sci. Statist. Comput.}, 11(4):648--655, July 1990.
+
+\end{thebibliography}

@@ -33,7 +33,7 @@
                 (\texttt{xiaobo.liu@postgrad.manchester.ac.uk}).
                }
 }
-\date{October 25, 2018}
+\date{October 27, 2018}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \def\R{\mathbb{R}}
@@ -47,7 +47,7 @@
 \def\Chat{\widehat{C}}
 \def\e{eigenvalue}
 \def\t#1{\texttt{\upshape #1}}
-
+\DeclareMathOperator{\rank}{rank}
 % \DeclareMathOperator{\diag}{diag}   % Requires amsmath.
 \def\diag{\mathop{\mathrm{diag}}}     % If not using amsmath.
 \def\trace{\mathop{\mathrm{trace}}}   % If not using amsmath.
@@ -130,7 +130,11 @@
 \section*{Tasks}
 {\bf Q1.} First, we review the basic theorem of polar decomposition below, which proves useful for later proofs of questions.
 \begin{theorem}\label{polardecom}
-	(Polar decomposition). Let $A\in\C^{\mbyn}$ with $m\ge n$. There exists a matrix $U\in\C^{\mbyn}$ with orthonormal columns and a unique Hermitian positive semidefinite matrix $H\in\C^{\nbyn}$ such that $A=UH$. The matrix $H$ is given by $(A^*A)^{1/2}$. If $\text{rank}(A)=n$ then $H$ is positive definite and $U$ is uniquely determined.
+	(Polar decomposition). Let $A\in\C^{\mbyn}$ with $m\ge n$. There exists a matrix 
+	$U\in\C^{\mbyn}$ with orthonormal columns and a unique Hermitian positive 
+	semidefinite matrix $H\in\C^{\nbyn}$ such that $A=UH$. The matrix $H$ is given by 
+	$(A^*A)^{1/2}$. If $\rank(A)=n$ then $H$ is positive definite and $U$ is 
+	uniquely determined.
 	
 \end{theorem}
 \unskip
@@ -208,22 +212,23 @@ Premultiplying by $P^*$ gives
 \begin{align*} 
   Q^*=&\frac{2}{\pi}\Sigma Q^*\int_{0}^{\infty}(t^2I+Q\Sigma^*\Sigma Q^*)^{-1}\mathrm{d}t	\\
   \Leftrightarrow  \quad
-  Q^*=&\frac{2}{\pi}\int_{0}^{\infty}(Q\Sigma^{-1})^{-1}(t^2I+Q\Sigma^*\Sigma Q^*)^{-1}\mathrm{d}t	\\
+  Q^*=&\frac{2}{\pi}\Sigma\int_{0}^{\infty}(t^2Q+Q\Sigma^*\Sigma)^{-1}\mathrm{d}t	\\
     \Leftrightarrow  \quad
-  Q^*=&\frac{2}{\pi}\int_{0}^{\infty}(t^2Q\Sigma^{-1}+Q\Sigma )^{-1}\mathrm{d}t	\\
-  \Leftrightarrow  \quad
-  Q^*=&\frac{2}{\pi}\int_{0}^{\infty}(t^2\Sigma^{-1}+\Sigma )^{-1}\mathrm{d}t\cdot Q^{-1}.	
+  Q^*=&\frac{2}{\pi}\Sigma\int_{0}^{\infty}(t^2I+\Sigma^2)^{-1}\mathrm{d}tQ^{-1}	\\
 \end{align*}
 Postmultiplying by $Q$ gives
 $$
-I=\frac{2}{\pi}\int_{0}^{\infty}(t^2\Sigma^{-1}+\Sigma )^{-1}\mathrm{d}t,
+I=\frac{2}{\pi}\int_{0}^{\infty}\Sigma(t^2I+\Sigma^2)^{-1}\mathrm{d}t,
 $$
-where the matrix $t^2\Sigma^{-1}+\Sigma$ is diagonal. Therefore, the formula that we want to verify reduces to 
+where the matrix $\Sigma(t^2I+\Sigma^2)^{-1}$ is diagonal. Therefore, the formula that 
+we want to verify reduces to 
 \begin{equation}\label{svd_int}
 1=\frac{2}{\pi}\int_{0}^{\infty}\frac{\sigma_i}{t^2+\sigma_i^2}\mathrm{d}t, \quad 
 i=1:n.
 \end{equation}
-Without loss of generality, we only prove \eqref{svd_int} with $\sigma_i$. Let $t=\sigma_i x$, it follows the right hand side of \eqref{svd_int} becomes
+We can prove \eqref{svd_int} for $\sigma_i,\ i=1:n$; let $t=\sigma_i x$, it follows 
+the 
+right hand side of \eqref{svd_int} becomes
 $$
 \frac{2}{\pi}\int_{0}^{\infty}\frac{\sigma_i^2}{\sigma_i^2x^2+\sigma_i^2}\mathrm{d}x=
 \frac{2}{\pi} \int_{0}^{\infty}\frac{1}{x^2+1}\mathrm{d}x=
@@ -377,7 +382,9 @@ By solving $x=\frac{1}{2}x(3-x^2)$ we obtain the only fixed point of this map in
 	\includegraphics[width=.6\textwidth]{function.eps}
 \end{figure}
 
-It is easy to compute that $f(0)=0$, $f(\sqrt{3})=0$, and $f(1)=1$, which is the maximum of $f$ in $(0,+\infty)$. Hence, $0<f(x)<1$ for $x\in(0,\sqrt{3})$. If we write
+It is easy to compute that $f(0)=0$, $f(\sqrt{3})=0$, and $f(1)=1$, which is the 
+maximum of $f$ in $(0,+\infty)$. Also, $f'(x)>0$ for $0<x<1$, and $f'(x)<0$ for 
+$1<x<\sqrt{3}$. Hence, $0<f(x)<1$ for $x\in(0,\sqrt{3})$. If we write
 $$
 x_{k+1}=x_k(1+\frac{1}{2}(1-x_k^2)),
 $$
@@ -413,7 +420,14 @@ Ignoring operation counts, from the results above we see immediately that matrix
 The algorithm computes the polar decomposition $A = UH$ of $A\in\C^{\nbyn}$ (ideally, $A$ should be nonsingular), which uses the methods we have discussed before to compute the unitary polar factor $U$, and then it easily computes the Hermitian factor $H$ by just one matrix multiplication $H = U^*A$.
 
 
-Let us assume $A$ is nonsingular. First, from our previous proofs, we have known that the Newton's method is bound to quadratically converge to the unique polar factor $U$, while the quadratic convergence of Newton--Schulz method is subject to the condition that $\norm{A}_2<3$. Because matrix multiplication is very fast on high-performance computers compared with matrix inversion, the algorithm will start with Newton iteration and switch to the Newton--Schulz iteration when the later is certain to converge, to ensure the convergence and to some degree optimize the speed. Based on this, we could use the criteria 
+Let us assume $A$ is nonsingular. First, from our previous proofs, we have shown that 
+the Newton's method is bound to quadratically converge to the unique polar factor $U$, 
+while the quadratic convergence of Newton--Schulz method is subject to the condition 
+that $\norm{A}_2<3$. Because matrix multiplication is very fast on high-performance 
+computers compared with matrix inversion, the algorithm will start with Newton 
+iteration and switch to the Newton--Schulz iteration when the later is certain to 
+converge, to ensure the convergence and to some degree optimize the speed. Based on 
+this, we could use the criteria 
 $$
 \norm{X_k}_2 < \sqrt{3}
 $$
@@ -435,18 +449,29 @@ The discussion above validates the convergence of the algorithm which combines t
 \begin{table}[ht]
 
 	\begin{center}
-				\caption{Results on test matrices. We set $RD_k:=\norm{X_k-X_{k-1}}_\infty/\norm{X_k}_\infty$, $EFE_k:=\norm{I-X_k^*{X_k}}_\infty$, and $k$ to be the total iterations. IS denotes the first iteration that the algorithm switch to the Newton--Schulz method.}
+				\caption{Results on test matrices. We set 
+				$RD_k:=\norm{X_k-X_{k-1}}_\infty/\norm{X_k}_\infty$, 
+				$EFE_k:=\norm{I-X_k^*{X_k}}_\infty$, and $k$ to be the total 
+				iterations. IS denotes the first iteration that the algorithm switch 
+				to the Newton--Schulz method. The reference `exact' polar factor 
+				$\widehat{U}$ is computed in quadruple precision.}
 		\begin{tabular}{lllllll} 
 			\hline
-			 $A$ & $\kappa_\infty(A)$ &  $k$ & IS & $RD_k$  & $EFE_k$ &  $\norm{U-X_k}_\infty$ \\
+			 $A$ & $\kappa_\infty(A)$ &  $k$ & IS & $RD_k$  & $EFE_k$ &  
+			 $\norm{\widehat{U}-X_k}_\infty$ \\
 			\hline
-		    \t{randn(5)} &  38.63 & 9 & 5 & 8.56$\times 10^{-16}$ & 5.17$\times 10^{-16}$ &  9.44$\times 10^{-16}$   \\
-		   \t{randn(20)} & 330.32 & 9 & 5 & 2.31$\times 10^{-16}$ & 1.26$\times 10^{-15}$ & 6.13$\times 10^{-15}$ \\
-		   \t{randn(100)}& 2.60$\times 10^{3}$ &10 & 6&  6.04$\times 10^{-16}$& 4.14$\times 10^{-15}$ & 2.65$\times 10^{-14}$ \\
+		    \t{randn(5)} &  28.39 & 9 & 4 & 1.57$\times 10^{-16}$ & 5.89$\times 
+		    10^{-16}$ &  6.20$\times 10^{-16}$   \\
+		   \t{randn(20)} & 744.16 & 10 & 6 & 2.55$\times 10^{-16}$ & 1.24$\times 
+		   10^{-15}$ & 1.98$\times 10^{-15}$ \\
+		   \t{randn(100)}& 1.97$\times 10^{3}$ &10 & 6&  5.77$\times 10^{-16}$& 
+		   4.26$\times 10^{-15}$ & 1.60$\times 10^{-14}$ \\
 		   \t{eye(8)}    & 1 & 1 & NA & NA&  0 & 0 \\
 		   \t{hilb(6)}   & 2.91$\times 10^{7}$& 29 & 25 & 1.12$\times 10^{-16}$ & 1.34$\times 10^{-27}$ & 9.37$\times 10^{-12}$ \\
-		   \t{magic(6)}  & 5.00$\times 10^{17}$& 58 & 54 & 1.46$\times 10^{-16}$ & 4.10$\times 10^{-16}$ & 2.36 \\
-		   \t{hadamard(8)} &  8 & 8 & 3 & 1.77$\times 10^{-16}$ &  6.39$\times 10^{-16}$ & 1.78$\times 10^{-15}$ \\	
+		   \t{magic(6)}  & 5.00$\times 10^{17}$& 58 & 54 & 1.46$\times 10^{-16}$ & 
+		   4.10$\times 10^{-16}$ & 1.29$\times 10^{-2}$ \\
+		   \t{hadamard(8)} &  8 & 8 & 3 & 1.77$\times 10^{-16}$ &  6.39$\times 
+		   10^{-16}$ & 4.30$\times 10^{-16}$ \\	
 			\hline		
 		\end{tabular}
 		\label{table}
@@ -460,7 +485,12 @@ Some observations on the results:
 \item For \t{hilb(6)}, it takes distinctly more iterations than previous matrices for the algorithm to reach its stopping criteria. From its profiles of $\norm{X_k-X_{k-1}}_\infty/\norm{X_k}_\infty$ and $\norm{I-X_k^*{X_k}}_\infty$ in Appendix A, we see the convergence of the Newton method is much slower than that of the Newton--Schulz method. Also, we note that the result is still accurate given that the condition number is of order $10^7$.
 \item \t{magic(6)} is a singular matrix, which becomes numerically invertible in MATLAB due to the occurrence of rounding errors. In this case it takes the algorithm 58 iterations to converge. Again, from its profiles of $\norm{X_k-X_{k-1}}_\infty/\norm{X_k}_\infty$ and $\norm{I-X_k^*{X_k}}_\infty$, we see the convergence of the Newton method is very slow because matrix inversion is required in its iterations. We also note that the forward error of the result is considerably big and much larger than $\norm{I-X_k^*{X_k}}_\infty$.
 \item For the well-conditioned matrix \t{hadamard(8)}, it only takes 8  iterations to converge.
-\item To summary, it tends to require more iterations for the algorithm to converge when the condition number of the computed matrix grows. Generally, $\norm{I-X_k^*{X_k}}_\infty$ is a good indicator of the forward error $\norm{U-X_k}_\infty$ for nonsingular matrices, while for singular matrices it may not be. Finally, our algorithm is not a good choice for singular matrices in terms of accuracy and speed.
+\item To summarize, it tends to require more iterations for the algorithm to converge 
+when the condition number of the computed matrix grows. Generally, 
+$\norm{I-X_k^*{X_k}}_\infty$ is a good indicator of the forward error 
+$\norm{U-X_k}_\infty$ for nonsingular matrices, while for singular matrices it may not 
+be. Finally, our algorithm is not a good choice for singular matrices in terms of 
+accuracy and speed.
 \end{enumerate}
  \vspace{.2cm}
  
@@ -536,32 +566,36 @@ its = 0;
 terminates = false;
 switches = false;
 notice = false; % give a notice when switches
-if plots
+if plots	% I will avoid opening a file to store data in the future
 	fid = fopen('data.txt','w'); % store data into data.txt for plotting
 end
 while terminates == false
 	its = its + 1;
 	if ~switches % Newton method
-		X_next = (X_prev + (X_prev\I)')/2;
+		X_next = (X_prev + inv(X_prev)')/2;
+		CP = X_next'*X_next;	% store and reuse this value
 		% compute the normwise relative distance (RD) between two
 		% iterates and the equivalent forward error (FE)
 		RD = norm(X_next - X_prev, Inf)/norm(X_next, Inf);
-		FE = norm(I - X_next'*X_next, Inf);
-		if FE <= theta
+		EFE = norm(I - CP, Inf);
+		if EFE <= theta
 			switches = true;
 			notice = true;
 		end
 	else % switch to Newton-Schulz method
-		X_next = (3*X_prev - X_prev*(X_prev')*X_prev)/2;
+		X_next = (3*X_prev - X_prev*CP)/2;
+		CP = X_next'*X_next;
 		RD = norm(X_next - X_prev, Inf)/norm(X_next, Inf);
-		FE = norm(I - X_next'*X_next, Inf);   
+		EFE = norm(I - CP, Inf);   
 	end
 	if plots
-		fprintf(fid, '%.2d %.16f %.16f \n', its, RD, FE);
+		fprintf(fid, '%.2d %.16f %.16f \n', its, RD, EFE);
 	end
-	fprintf('%.2dth iters: Relative Distance  %.4e,  Forward Error  %.4e \n', its, RD, FE);
+	fprintf('%.2dth iters: Relative Distance %.4e, Forward Error %.4e \n', its 
+	, RD,EFE);
 	if notice
-		fprintf(' Now switch from the Newton iteration to the Newton-Schulz iteration.\n');
+		fprintf(' Now switch from the Newton iteration to the Newton-Schulz 
+		iteration.\n');
 		notice = false; % only one notice is needed
 	end
 	if RD < tol
@@ -585,14 +619,12 @@ if plots
 	ylabel('normwise error');
 end
 end
-
-
 \end{lstlisting}
 \vspace{1cm}
 \begin{lstlisting}
 function S = plosqrt(A)
 %POLSQRT Matrix square root
-%   [S] = plosqrt(A) Computes the square root S = A^(1/2) of the symmetric
+%   S = plosqrt(A) Computes the square root S = A^(1/2) of the symmetric
 %   positive definite matrix A by doing a Cholesky decomposition and
 %   calling poldec.
 
@@ -600,7 +632,7 @@ function S = plosqrt(A)
 if p~= 0
 	disp('sorry, I only work for a sym.pos.def matrix.');
 else
-	[~, S, ~] = poldec(R);
+	[~, S] = poldec(R);
 	clc; % clear the displays that result from calling poldec()
 	disp('>> plosqrt()');
 end

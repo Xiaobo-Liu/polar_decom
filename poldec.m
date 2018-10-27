@@ -17,32 +17,35 @@ its = 0;
 terminates = false;
 switches = false;
 notice = false; % give a notice when switches
-if plots
+if plots % I will avoid opening a file to store data in the future
     fid = fopen('data.txt','w'); % store data into data.txt for plotting
 end
 while terminates == false
     its = its + 1;
     if ~switches % Newton method
-        X_next = (X_prev + (X_prev\I)')/2;
+        X_next = (X_prev + inv(X_prev)')/2;
+        CP = X_next'*X_next; % store and reuse this value
         % compute the normwise relative distance (RD) between two
         % iterates and the equivalent forward error (FE)
         RD = norm(X_next - X_prev, Inf)/norm(X_next, Inf);
-        FE = norm(I - X_next'*X_next, Inf);
-        if FE <= theta
+        EFE = norm(I - CP, Inf);
+        if EFE <= theta
             switches = true;
             notice = true;
         end
     else % switch to Newton-Schulz method
-        X_next = (3*X_prev - X_prev*(X_prev')*X_prev)/2;
+        X_next = (3*X_prev - X_prev*CP)/2;
+        CP = X_next'*X_next;
         RD = norm(X_next - X_prev, Inf)/norm(X_next, Inf);
-        FE = norm(I - X_next'*X_next, Inf);   
+        EFE = norm(I - X_next'*X_next, Inf);   
     end
     if plots
-        fprintf(fid, '%.2d %.16f %.16f \n', its, RD, FE);
+        fprintf(fid, '%.2d %.16f %.16f \n', its, RD, EFE);
     end
-    fprintf('%.2dth iters: Relative Distance  %.4e,  Forward Error  %.4e \n', its, RD, FE);
+    fprintf('%.2dth iters: Relative Distance  %.4e,  Forward Error  %.4e \n', its,...
+    RD, EFE);
     if notice
-        fprintf(' Now switch from the Newton iteration to the Newton-Schulz iteration.\n');
+        fprintf(' Switch from the Newton iteration to the Newton-Schulz iteration.\n');
         notice = false; % only one notice is needed
     end
     if RD < tol
